@@ -31,6 +31,19 @@ func foundHash(h string) bool {
     return false;
 }
 
+func travel(path string, info os.FileInfo, err error) error {
+    if info.IsDir() {
+        fmt.Println("dir:  ", path)
+    } else {
+        fmt.Println("file: ", path)
+        if (foundHash(shasum(path))) {
+            fmt.Println("found file")
+        }
+    }
+    return nil
+}
+
+
 var hashes = make([]string, 1)
 
 func main() {
@@ -40,18 +53,6 @@ func main() {
 
     fmt.Printf(h)
 
-    visit := func(path string, info os.FileInfo, err error) error {
-        if info.IsDir() {
-            fmt.Println("dir:  ", path)
-        } else {
-            fmt.Println("file: ", path)
-            if (foundHash(shasum(path))) {
-                fmt.Println("found file")
-            }
-        }
-        return nil
-    }
-
-    err := filepath.Walk("./", visit)
+    err := filepath.Walk("./", travel)
     check(err)
 }
