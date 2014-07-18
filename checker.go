@@ -32,12 +32,10 @@ func foundHash(h string) bool {
 }
 
 func travel(path string, info os.FileInfo, err error) error {
-    if info.IsDir() {
-        fmt.Println("dir:  ", path)
-    } else {
-        fmt.Println("file: ", path)
+    if info.Mode().IsRegular() {
         if (foundHash(shasum(path))) {
-            fmt.Println("found file")
+            fmt.Println("file: ", path)
+            fmt.Println("found matching hash")
         }
     }
     return nil
@@ -50,8 +48,6 @@ func main() {
 
     h := shasum("yawe.priv")
     hashes = append(hashes, h)
-
-    fmt.Printf(h)
 
     err := filepath.Walk("./", travel)
     check(err)
