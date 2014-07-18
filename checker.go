@@ -46,8 +46,7 @@ var hashes = make([]string, 1)
 
 func main() {
 
-    h := shasum("yawe.priv")
-    hashes = append(hashes, h)
+    hashes = append(hashes, "efcc47c3fd5806515a270d6fa0bbe4cc7353eabc")
 
     err := filepath.Walk("./", travel)
     check(err)
