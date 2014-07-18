@@ -22,11 +22,18 @@ func shasum(f string) string {
     return fmt.Sprintf("%x", hasher.Sum(nil))
 }
 
+func foundHash(h string) bool {
+    for _, value := range hashes {
+        if (h == value) {
+            return true;
+        }
+    }
+    return false;
+}
 
 var hashes = make([]string, 1)
 
 func main() {
-	//hash := "efcc47c3fd5806515a270d6fa0bbe4cc7353eabc"
 
     h := shasum("yawe.priv")
     hashes = append(hashes, h)
@@ -38,6 +45,9 @@ func main() {
             fmt.Println("dir:  ", path)
         } else {
             fmt.Println("file: ", path)
+            if (foundHash(shasum(path))) {
+                fmt.Println("found file")
+            }
         }
         return nil
     }
