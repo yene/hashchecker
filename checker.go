@@ -6,6 +6,7 @@ import (
     "os"
     "path/filepath"
     "io/ioutil"
+    "bufio"
 )
 
 func check(e error) {
@@ -34,19 +35,31 @@ func foundHash(h string) bool {
 func travel(path string, info os.FileInfo, err error) error {
     if info.Mode().IsRegular() {
         if (foundHash(shasum(path))) {
-            fmt.Println("file: ", path)
-            fmt.Println("found matching hash")
+            fmt.Printf("file \"%s\" has matching hash\n", string(path))
         }
     }
     return nil
 }
 
+func readLines(path string) ([]string, error) {
+  file, err := os.Open(path)
+  if err != nil {
+    return nil, err
+  }
+  defer file.Close()
+
+  var lines []string
+  scanner := bufio.NewScanner(file)
+  for scanner.Scan() {
+    lines = append(lines, scanner.Text())
+  }
+  return lines, scanner.Err()
+}
 
 var hashes = make([]string, 1)
 
 func main() {
-
-    hashes = append(hashes, "efcc47c3fd5806515a270d6fa0bbe4cc7353eabc")
+    hashes,_ = readLines("hashes.txt")
 
     err := filepath.Walk("./", travel)
     check(err)
