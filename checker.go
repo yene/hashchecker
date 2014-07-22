@@ -16,8 +16,7 @@ func check(e error) {
 }
 
 func shasum(f string) string {
-    dat, err := ioutil.ReadFile(f)
-    check(err)
+    dat,_ := ioutil.ReadFile(f)
     hasher := sha1.New()
     hasher.Write(dat)
     return fmt.Sprintf("%x", hasher.Sum(nil))
@@ -33,6 +32,9 @@ func foundHash(h string) bool {
 }
 
 func travel(path string, info os.FileInfo, err error) error {
+    if (info.Size() > 8000) { // skip big files
+        return nil
+    }
     if info.Mode().IsRegular() {
         if (foundHash(shasum(path))) {
             fmt.Printf("file \"%s\" has matching hash\n", string(path))
@@ -59,8 +61,13 @@ func readLines(path string) ([]string, error) {
 var hashes = make([]string, 1)
 
 func main() {
+    path := "./"
+    if (len(os.Args) == 2) {
+        path = os.Args[1];
+    }
+
     hashes,_ = readLines("hashes.txt")
 
-    err := filepath.Walk("./", travel)
+    err := filepath.Walk(path, travel)
     check(err)
 }
