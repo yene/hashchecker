@@ -32,10 +32,11 @@ func foundHash(h string) bool {
 }
 
 func travel(path string, info os.FileInfo, err error) error {
-    if (info.Size() > 8000) { // skip big files
-        return nil
+    if (os.IsPermission(err)) {
+       return nil;
     }
-    if info.Mode().IsRegular() {
+    if info.Mode().IsRegular() && info.Size() < 8000 {
+        fmt.Printf("checking \"%s\"\n", string(path))
         if (foundHash(shasum(path))) {
             fmt.Printf("file \"%s\" has matching hash\n", string(path))
         }
